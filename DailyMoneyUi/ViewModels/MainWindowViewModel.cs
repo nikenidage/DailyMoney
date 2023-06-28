@@ -27,11 +27,31 @@ public class MainWindowViewModel : ViewModelBase
         };
         timer.Tick += (sender, e) =>
         {
-            var now = DateTime.Now;
-            var number = ((now - new DateTime(now.Year,now.Month,now.Day)).TotalSeconds * MoneyCalculateSettings.Instance.SalaryPerSecond).ToString("F");
-            Text = string.Format(MoneyCalculateSettings.Instance.TextTemplate, number);
+            var result = GetMoneyNumber();
+            Text = string.Format(MoneyCalculateSettings.Instance.TextTemplate, result.ToString("F"));
         };
         timer.Start();
+    }
 
+    private double GetMoneyNumber()
+    {
+        var now = DateTime.Now;
+        var settings = MoneyCalculateSettings.Instance;
+        if (now.TimeOfDay < settings.StartTime)
+            return 0;
+        if (now.TimeOfDay > settings.EndTime)
+            return settings.SalaryTotalSeconds * settings.SalaryPerSecond;
+
+        var totalSeconds = 0D;
+        if (settings.IsHaveLunchTime && settings.LunchStartTime.HasValue && settings.LunchEndTime.HasValue &&
+            now.TimeOfDay > settings.LunchStartTime.Value &&
+            now.TimeOfDay < settings.LunchEndTime.Value)
+            totalSeconds = (settings.LunchStartTime.Value - settings.StartTime).TotalSeconds;
+        else{
+            totalSeconds = (now.TimeOfDay - settings.StartTime).TotalSeconds;
+            if (settings.IsHaveLunchTime && settings.LunchStartTime.HasValue && settings.LunchEndTime.HasValue)
+                totalSeconds -= (settings.LunchEndTime.Value - settings.LunchStartTime.Value).TotalSeconds;
+        }
+        return totalSeconds * settings.SalaryPerSecond;
     }
 }

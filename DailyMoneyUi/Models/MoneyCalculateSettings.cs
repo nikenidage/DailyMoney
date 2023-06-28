@@ -87,12 +87,22 @@ public class MoneyCalculateSettings : ViewModelBase
     {
         get
         {
+            var salaryTotalSeconds = SalaryTotalSeconds;
+            if (WorkDays == 0 || salaryTotalSeconds == 0)
+                return 0;
+            return Salary / WorkDays / salaryTotalSeconds;
+        }
+    }
+    
+    [JsonIgnore]
+    public double SalaryTotalSeconds
+    {
+        get
+        {
             var secondsOfDays = (EndTime - StartTime).TotalSeconds;
             if (IsHaveLunchTime && LunchStartTime.HasValue && LunchEndTime.HasValue)
                 secondsOfDays -= (LunchEndTime.Value - LunchStartTime.Value).TotalSeconds;
-            if (WorkDays == 0 || secondsOfDays == 0)
-                return 0;
-            return Salary / WorkDays / secondsOfDays;
+            return secondsOfDays;
         }
     }
 }

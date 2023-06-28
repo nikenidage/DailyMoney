@@ -30,7 +30,7 @@
 				<TimePicker SelectedTime="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=StartTime}" />
 				<Label Content="下班时间"></Label>
 				<TimePicker SelectedTime="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=EndTime}" />
-				<CheckBox>是否有午休</CheckBox>
+				<CheckBox IsChecked="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=IsHaveLunchTime}">是否有午休</CheckBox>
 				<Label Content="午休开始时间"></Label>
 				<TimePicker SelectedTime="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=LunchStartTime}" />
 				<Label Content="午休结束时间"></Label>
