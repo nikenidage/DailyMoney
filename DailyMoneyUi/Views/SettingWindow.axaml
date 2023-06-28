@@ -1,0 +1,64 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DailyMoneyUi.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:DailyMoneyUi.Models"
+        mc:Ignorable="d"
+        x:Class="DailyMoneyUi.Views.SettingWindow"
+        Icon="/Assets/logo.ico"
+        Title="Setting"
+        Width="570" Height="500"
+>
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:SettingWindowViewModel/>
+    </Design.DataContext>
+    <ScrollViewer Margin="10">
+	    <StackPanel Margin="10" Orientation="Horizontal">
+		    <StackPanel.Styles>
+			    <Style Selector="Label.h1" >
+				    <Setter Property="FontSize" Value="24"/>
+				    <Setter Property="FontWeight" Value="Bold"/>
+			    </Style>
+		    </StackPanel.Styles>
+		    <StackPanel Margin="10">
+			    <Label Classes="h1">数据设置</Label>
+			    <Separator></Separator>
+			    <Label Content="上班时间"></Label>
+				<TimePicker SelectedTime="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=StartTime}" />
+				<Label Content="下班时间"></Label>
+				<TimePicker SelectedTime="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=EndTime}" />
+				<CheckBox>是否有午休</CheckBox>
+				<Label Content="午休开始时间"></Label>
+				<TimePicker SelectedTime="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=LunchStartTime}" />
+				<Label Content="午休结束时间"></Label>
+				<TimePicker SelectedTime="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=LunchEndTime}" />
+				<Label Content="月薪 RMB"></Label>
+				<TextBox Text="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=Salary}" />
+				<Label Content="一个月工作多少天"></Label>
+				<TextBox Text="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=WorkDays}" />
+			    <Button Command="{Binding SaveCommand}" Margin="10">保存</Button>
+			</StackPanel>
+		    <StackPanel Margin="10">
+			    <Label Classes="h1">外观设置</Label>
+			    <Separator></Separator>
+			    <Label Content="窗口背景颜色"></Label>
+				<ColorPicker Color="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=BackgroundColor,Converter={StaticResource ToColorConverter}}"></ColorPicker>
+	            <Label Content="文字颜色"></Label>
+	            <ColorPicker Color="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=TextColor,Converter={StaticResource ToColorConverter}}"></ColorPicker>
+				<Label Content="窗口大小"></Label>
+				<StackPanel Orientation="Horizontal">
+					<Label Content="宽"></Label>
+					<TextBox Width="100" Text="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=Width}" />
+					<Label Content="高"></Label>
+					<TextBox Width="100" Text="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=Height}" />
+				</StackPanel>
+				<Label Content="文本模板"></Label>
+				<TextBox Text="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=TextTemplate}" />
+				<CheckBox IsChecked="{Binding Source={x:Static models:MoneyCalculateSettings.Instance}, Path=IsStartWithSystem}">随系统启动</CheckBox>
+		    </StackPanel>
+	    </StackPanel>
+    </ScrollViewer>
+</Window>

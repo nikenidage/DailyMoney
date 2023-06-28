@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33209.295
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DailyMoneyUi", "DailyMoneyUi\DailyMoneyUi.csproj", "{E769FA9D-8883-4F75-AA50-4D89310F6BF7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E3E5A7EC-C503-4DFA-BC21-3649C7EBF396}"
+	ProjectSection(SolutionItems) = preProject
+		appcast.xml = appcast.xml
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		nuget.config = nuget.config
+		readme.md = readme.md
+		publish.sh = publish.sh
+		publish.command = publish.command
+		publish.cmd = publish.cmd
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.Avalonia", "NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj", "{628B2EDB-F6D9-4015-9649-81C9461A6B95}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E769FA9D-8883-4F75-AA50-4D89310F6BF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E769FA9D-8883-4F75-AA50-4D89310F6BF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E769FA9D-8883-4F75-AA50-4D89310F6BF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E769FA9D-8883-4F75-AA50-4D89310F6BF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{628B2EDB-F6D9-4015-9649-81C9461A6B95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{628B2EDB-F6D9-4015-9649-81C9461A6B95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{628B2EDB-F6D9-4015-9649-81C9461A6B95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{628B2EDB-F6D9-4015-9649-81C9461A6B95}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB5447FC-BA2C-401A-9307-D5A403C1A7FE}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType Condition="'$(Configuration.toUpper())' != 'DEBUG'">WinExe</OutputType>
+		<OutputType Condition="'$(Configuration.toUpper())' == 'DEBUG'">Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ApplicationIcon>Assets/logo.ico</ApplicationIcon>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<Nullable>enable</Nullable>
+		<PublishAot>true</PublishAot>
+		<PublishTrimmed>true</PublishTrimmed>
+		<SelfContained>true</SelfContained>
+		<StripSymbols>true</StripSymbols>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<IsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</IsWindows>
+		<IsLinux Condition="$([MSBuild]::IsOSPlatform('Linux'))">true</IsLinux>
+		<IsOSX Condition="$([MSBuild]::IsOSPlatform('OSX'))">true</IsOSX>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsWindows)'=='true'">
+		<DefineConstants>Windows</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsOSX)'=='true'">
+		<DefineConstants>OSX</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsLinux)'=='true'">
+		<DefineConstants>Linux</DefineConstants>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+		<None Remove=".gitignore" />
+		<None Update="Assets/app.icns" CopyToPublishDirectory="PreserveNewest" Condition="$(RuntimeIdentifier.StartsWith('osx'))">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootDescriptor Include="Roots.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.0.0-preview7" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview7" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview7" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview7" />
+		<PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.0-preview7" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview7" />
+		<PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="2.2.1" />
+		<PackageReference Include="PublishAotCompressed" Version="1.0.0" Condition="!$(RuntimeIdentifier.StartsWith('osx'))" />
+		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" Condition="$(RuntimeIdentifier.StartsWith('osx'))" />
+
+	</ItemGroup>
+	<!-- Information for Dotnet.Bundle to Generate macOS app-->
+	<PropertyGroup>
+		<CFBundleName>$(AssemblyName)</CFBundleName>
+		<CFBundleDisplayName>$(AssemblyName)</CFBundleDisplayName>
+		<CFBundleIdentifier>com.DailyMoney.$(AssemblyName)</CFBundleIdentifier>
+		<CFBundleVersion>1.0.0</CFBundleVersion>
+		<CFBundlePackageType>APPL</CFBundlePackageType>
+		<!--<CFBundleSignature>????</CFBundleSignature>-->
+		<CFBundleExecutable>$(AssemblyName)</CFBundleExecutable>
+		<CFBundleIconFile>Assets/app.icns</CFBundleIconFile>
+		<NSPrincipalClass>NSApplication</NSPrincipalClass>
+		<NSHighResolutionCapable>true</NSHighResolutionCapable>
+		<CFBundleShortVersionString>1.0</CFBundleShortVersionString>
+		<!-- Optional -->
+		<NSRequiresAquaSystemAppearance>true</NSRequiresAquaSystemAppearance>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Update="Views\SettingWindow.axaml.cs">
+			<DependentUpon>SettingWindow.axaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj" />
+	</ItemGroup>
+
+
+
+</Project>

@@ -1,0 +1,125 @@
+name: NativeAOT Build
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  tag: $GITHUB_REF_NAME
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Git Repo Sync
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: wangchucheng/git-repo-sync@v0.1.0
+      with:
+        target-url: https://jihulab.com/Rwing/test-release.git
+        target-username: ${{ secrets.GITLAB_USERNAME }}
+        target-token: ${{ secrets.GITLAB_TOKEN }}
+  build-on-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup NativeAOT pre-requisites
+      run: sudo apt-get install clang zlib1g-dev libkrb5-dev --assume-yes
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+    - name: Publish
+      run: |
+        sudo chmod +x ./publish.sh
+        ./publish.sh ${{github.ref_name}}
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Linux-Artifact-${{github.ref_name}}
+        path: |
+          ./DailyMoneyUi/bin/Release/net7.0/linux-x64/publish/*.bin
+          ./DailyMoneyUi/bin/Release/net7.0/linux-x64/publish/*.so
+  build-on-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+    - name: Publish
+      run: ./publish.cmd ${{github.ref_name}}
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Windows-Artifact-${{github.ref_name}}
+        path: |
+          .\DailyMoneyUi\bin\Release\net7.0\win-x64\publish\*.exe
+          .\DailyMoneyUi\bin\Release\net7.0\win-x64\publish\*.dll
+  build-on-macos:
+    runs-on: macos-11
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+    - name: Publish
+      run: |
+        sudo chmod +x ./publish.command
+        ./publish.command ${{github.ref_name}}
+        mv ./installer_background.png ./DailyMoneyUi/bin/Release/net7.0/osx-x64/publish/
+        cd ./DailyMoneyUi/bin/Release/net7.0/osx-x64/publish
+        mkdir app_folder
+        mv ./DailyMoneyUi.app ./app_folder/
+        git clone https://github.com/create-dmg/create-dmg.git
+        ./create-dmg/create-dmg \
+          --volname "DailyMoneyUi Installer" \
+          --background "installer_background.png" \
+          --window-pos 200 120 \
+          --window-size 800 400 \
+          --icon-size 100 \
+          --icon "DailyMoneyUi.app" 200 190 \
+          --hide-extension "DailyMoneyUi.app" \
+          --app-drop-link 600 185 \
+          "DailyMoneyUi-Installer.dmg" \
+          "app_folder/"
+        zip -r -9 macOS-Artifact.zip *.dmg
+    - uses: actions/upload-artifact@v2
+      with:
+        name: macOS-Artifact-${{github.ref_name}}
+        path: ./DailyMoneyUi/bin/Release/net7.0/osx-x64/publish/macOS-Artifact.zip
+  download-artiface:
+    runs-on: ubuntu-latest
+    needs: [build-on-linux, build-on-windows, build-on-macos]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v3
+    - name: upload artifacts to gitlab
+      run: |
+        url_windows=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip
+        url_linux=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip
+        url_macos=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip
+        cat appcast.xml
+        cp appcast.xml appcast-windows.xml
+        sed -i "s|url_placeholder|$url_windows|g" appcast-windows.xml
+        sed -i "s|os_placeholder|windows|g" appcast-windows.xml
+        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-windows.xml
+        cp appcast.xml appcast-linux.xml
+        sed -i "s|url_placeholder|$url_linux|g" appcast-linux.xml
+        sed -i "s|os_placeholder|linux|g" appcast-linux.xml
+        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-linux.xml
+        cp appcast.xml appcast-macos.xml
+        sed -i "s|url_placeholder|$url_macos|g" appcast-macos.xml
+        sed -i "s|os_placeholder|macos|g" appcast-macos.xml
+        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-macos.xml
+        cat appcast-windows.xml
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-windows.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-windows.xml
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-linux.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-linux.xml
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-macos.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-macos.xml
+    - name: create gitlab release
+      run: |
+        curl --header 'Content-Type: application/json' --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" \
+             --data '{ "name": "${{github.ref_name}}", "tag_name": "${{github.ref_name}}", "assets": { "links": [{ "name": "DailyMoney-win-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip" }{ "name": "DailyMoney-linux-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip" },{ "name": "DailyMoney-osx-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip" }] } }' \
+             --request POST "${{vars.GITLAB_URL}}/releases"

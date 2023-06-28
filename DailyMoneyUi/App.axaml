@@ -1,0 +1,23 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:DailyMoneyUi" 
+             xmlns:viewModels="clr-namespace:DailyMoneyUi.ViewModels" 
+             xmlns:models="clr-namespace:DailyMoneyUi.Models"
+             x:DataType="viewModels:ApplicationViewModel"
+
+             x:Class="DailyMoneyUi.App">
+
+    <Application.Resources>
+		<local:ToColorConverter x:Key="ToColorConverter" />
+    </Application.Resources>
+
+    <Application.DataTemplates>
+		<local:ViewLocator/>
+	</Application.DataTemplates>
+
+	<Application.Styles>
+		<FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+	</Application.Styles>
+
+</Application>
