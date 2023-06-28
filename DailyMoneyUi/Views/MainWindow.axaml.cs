@@ -38,11 +38,11 @@ public partial class MainWindow : Window
         this.Topmost = true;
         this.SystemDecorations = SystemDecorations.None;
 #if OSX
-        var appcastUrl = "https://jihulab.com/nikenidage/DailyMoney/packages/generic/release/xml/appcast-osx.xml";
+        var appcastUrl = "https://jihulab.com/api/v4/projects/117941/packages/generic/release/xml/appcast-macos.xml";
 #elif Windows
-        var appcastUrl = "https://jihulab.com/nikenidage/DailyMoney/packages/generic/release/xml/appcast-windows.xml";
+        var appcastUrl = "https://jihulab.com/api/v4/projects/117941/packages/generic/release/xml/appcast-windows.xml";
 #else
-        var appcastUrl = "https://jihulab.com/nikenidage/DailyMoney/packages/generic/release/xml/appcast-linux.xml";
+        var appcastUrl = "https://jihulab.com/api/v4/projects/117941/packages/generic/release/xml/appcast-linux.xml";
 #endif
         // set icon in project properties!
         _sparkle = new CustomSparkleUpdater(appcastUrl, new Ed25519Checker(SecurityMode.Unsafe, ""))
