@@ -18,7 +18,7 @@ jobs:
         fetch-depth: 0
     - uses: wangchucheng/git-repo-sync@v0.1.0
       with:
-        target-url: https://jihulab.com/Rwing/test-release.git
+        target-url: https://jihulab.com/nikenidage/DailyMoney.git
         target-username: ${{ secrets.GITLAB_USERNAME }}
         target-token: ${{ secrets.GITLAB_TOKEN }}
   build-on-linux:
