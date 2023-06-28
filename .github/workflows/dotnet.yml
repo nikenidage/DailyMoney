@@ -101,6 +101,15 @@ jobs:
         url_windows=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip
         url_linux=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip
         url_macos=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip
+        cd ./Windows-Artifact-${{github.ref_name}}/
+        zip Windows-Artifact.zip * -r
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file Windows-Artifact.zip $url_windows
+        cd ..
+        cd ./Linux-Artifact-${{github.ref_name}}/
+        zip Linux-Artifact.zip * -r
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file Linux-Artifact.zip $url_linux
+        cd ..
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file macOS-Artifact-${{github.ref_name}}/macOS-Artifact.zip $url_macos
         cat appcast.xml
         cp appcast.xml appcast-windows.xml
         sed -i "s|url_placeholder|$url_windows|g" appcast-windows.xml
@@ -121,5 +130,5 @@ jobs:
     - name: create gitlab release
       run: |
         curl --header 'Content-Type: application/json' --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" \
-             --data '{ "name": "${{github.ref_name}}", "tag_name": "${{github.ref_name}}", "assets": { "links": [{ "name": "DailyMoney-win-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip" }{ "name": "DailyMoney-linux-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip" },{ "name": "DailyMoney-osx-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip" }] } }' \
+             --data '{ "name": "${{github.ref_name}}", "tag_name": "${{github.ref_name}}", "assets": { "links": [{ "name": "DailyMoney-win-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip" },{ "name": "DailyMoney-linux-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip" },{ "name": "DailyMoney-osx-${{github.ref_name}}.zip", "url": "${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip" }] } }' \
              --request POST "${{vars.GITLAB_URL}}/releases"
