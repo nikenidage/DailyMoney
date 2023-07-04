@@ -47,9 +47,10 @@ public class MainWindowViewModel : ViewModelBase
             now.TimeOfDay > settings.LunchStartTime.Value &&
             now.TimeOfDay < settings.LunchEndTime.Value)
             totalSeconds = (settings.LunchStartTime.Value - settings.StartTime).TotalSeconds;
-        else{
+        else
+        {
             totalSeconds = (now.TimeOfDay - settings.StartTime).TotalSeconds;
-            if (settings.IsHaveLunchTime && settings.LunchStartTime.HasValue && settings.LunchEndTime.HasValue)
+            if (settings.IsHaveLunchTime && settings.LunchStartTime.HasValue && settings.LunchEndTime.HasValue && now.TimeOfDay >= settings.LunchEndTime.Value)
                 totalSeconds -= (settings.LunchEndTime.Value - settings.LunchStartTime.Value).TotalSeconds;
         }
         return totalSeconds * settings.SalaryPerSecond;
