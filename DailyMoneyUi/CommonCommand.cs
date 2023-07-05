@@ -86,7 +86,7 @@ public class CommonCommand
         if (string.IsNullOrWhiteSpace(MoneyCalculateSettings.Instance.BackgroundColor) &&
             string.IsNullOrWhiteSpace(MoneyCalculateSettings.Instance.TextColor))
         {
-            var settings = AvaloniaLocator.Current.GetRequiredService<IPlatformSettings>();
+            var settings = Application.Current.PlatformSettings;
             var isDark = settings.GetColorValues().ThemeVariant == PlatformThemeVariant.Dark;
             MoneyCalculateSettings.Instance.BackgroundColor = isDark ? "Black" : "White";
             MoneyCalculateSettings.Instance.TextColor = isDark ? "White" : "Black";
